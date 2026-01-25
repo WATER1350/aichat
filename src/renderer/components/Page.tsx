@@ -11,9 +11,10 @@ export type PageProps = {
   children?: React.ReactNode
   title: string | React.ReactNode
   left?: React.ReactNode
+  headerAction?: React.ReactNode
 }
 
-export const Page: FC<PageProps> = ({ children, title, left }) => {
+export const Page: FC<PageProps> = ({ children, title, left, headerAction }) => {
   const showSidebar = useUIStore((s) => s.showSidebar)
   const setShowSidebar = useUIStore((s) => s.setShowSidebar)
   const isSmallScreen = useIsSmallScreen()
@@ -28,7 +29,7 @@ export const Page: FC<PageProps> = ({ children, title, left }) => {
       >
         {left ||
           ((!showSidebar || isSmallScreen) && (
-            <Flex align="center" className={needRoomForMacWindowControls ? 'pl-20' : ''}>
+            <Flex align="center" className={needRoomForMacWindowControls && !isSmallScreen ? 'pl-20' : ''}>
               <ActionIcon
                 className="controls"
                 variant="subtle"
@@ -51,8 +52,9 @@ export const Page: FC<PageProps> = ({ children, title, left }) => {
             title
           )}
         </Flex>
+        {headerAction}
         <WindowControls className="-mr-3 ml-2" />
-        {isSmallScreen && <Box w={28} />}
+        {isSmallScreen && !headerAction && <Box w={28} />}
       </Flex>
 
       <div className="flex-1 overflow-auto">{children}</div>

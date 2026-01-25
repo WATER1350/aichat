@@ -1,12 +1,13 @@
 import { type RemoteConfig, Theme } from '@/../shared/types'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import ExitFullscreenButton from '@/components/ExitFullscreenButton'
+import MobileTabBar from '@/components/MobileTabBar'
 import Toasts from '@/components/Toasts'
 import useAppTheme from '@/hooks/useAppTheme'
 import { useSystemLanguageWhenInit } from '@/hooks/useDefaultSystemLanguage'
 import { useI18nEffect } from '@/hooks/useI18nEffect'
 import useNeedRoomForWinControls from '@/hooks/useNeedRoomForWinControls'
-import { useSidebarWidth } from '@/hooks/useScreenChange'
+import { useIsSmallScreen, useSidebarWidth } from '@/hooks/useScreenChange'
 import useShortcut from '@/hooks/useShortcut'
 import '@/modals'
 import NiceModal from '@ebay/nice-modal-react'
@@ -99,6 +100,7 @@ function Root() {
 
   const showSidebar = useUIStore((s) => s.showSidebar)
   const sidebarWidth = useSidebarWidth()
+  const isSmallScreen = useIsSmallScreen()
 
   const _theme = useTheme()
   const { setColorScheme } = useMantineColorScheme()
@@ -158,7 +160,7 @@ function Root() {
       <Grid container className="h-full">
         <Sidebar />
         <Box
-          className="h-full w-full"
+          className="h-full w-full relative flex flex-col"
           sx={{
             flexGrow: 1,
             ...(showSidebar
@@ -169,8 +171,11 @@ function Root() {
           }}
         >
           <ErrorBoundary name="main">
-            <Outlet />
+            <Box className="flex-1 overflow-hidden relative flex flex-col" sx={{ pb: (platform.type === 'mobile' || isSmallScreen) ? '56px' : 0 }}>
+              <Outlet />
+            </Box>
           </ErrorBoundary>
+          {(platform.type === 'mobile' || isSmallScreen) && <MobileTabBar />}
         </Box>
       </Grid>
       {/* 对话设置 */}

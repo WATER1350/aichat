@@ -62,7 +62,7 @@ export default function Header(props: { session: Session }) {
       className={clsx('flex-none title-bar border-0 border-b border-solid border-chatbox-border-primary')}
     >
       {(!showSidebar || isSmallScreen) && (
-        <Flex align="center" className={needRoomForMacWindowControls ? 'pl-20' : ''}>
+        <Flex align="center" className={needRoomForMacWindowControls && !isSmallScreen ? 'pl-20' : ''}>
           <ActionIcon
             className="controls"
             variant="subtle"

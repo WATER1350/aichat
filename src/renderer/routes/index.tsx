@@ -148,7 +148,24 @@ function Index() {
   }, [session])
 
   return (
-    <Page title="">
+    <Page
+      title=""
+      headerAction={
+        isSmallScreen ? (
+          <Button
+            bg="black"
+            c="white"
+            radius="xl"
+            size="xs"
+            px="md"
+            styles={{ root: { fontWeight: 500 } }}
+            onClick={() => router.navigate({ to: '/login' })}
+          >
+            登录
+          </Button>
+        ) : undefined
+      }
+    >
       <div className="p-0 flex flex-col h-full">
         <Stack align="center" justify="center" gap="sm" flex={1}>
           <HomepageIcon className="h-8" />
