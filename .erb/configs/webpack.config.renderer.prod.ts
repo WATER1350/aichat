@@ -33,7 +33,7 @@ const configuration: webpack.Configuration = {
 
   mode: 'production',
 
-  target: ['web', 'electron-renderer'],
+  target: process.env.CHATBOX_BUILD_PLATFORM === 'web' ? ['web'] : ['web', 'electron-renderer'],
 
   entry: [path.join(webpackPaths.srcRendererPath, 'index.tsx')],
 

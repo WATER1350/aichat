@@ -7,8 +7,10 @@ import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin'
 import webpackPaths from './webpack.paths'
 import { dependencies as externals } from '../../release/app/package.json'
 
+const isWebOnly = process.env.DEV_WEB_ONLY === 'true' || process.env.CHATBOX_BUILD_PLATFORM === 'web'
+
 const configuration: webpack.Configuration = {
-  externals: [...Object.keys(externals || {})],
+  externals: isWebOnly ? [] : [...Object.keys(externals || {})],
 
   stats: 'errors-only',
 

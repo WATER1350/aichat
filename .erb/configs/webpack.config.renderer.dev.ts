@@ -30,7 +30,7 @@ const DEV_WEB_ONLY = process.env.DEV_WEB_ONLY === 'true'
 /**
  * Warn if the DLL is not built
  */
-if (!skipDLLs && !(fs.existsSync(webpackPaths.dllPath) && fs.existsSync(manifest))) {
+if (!DEV_WEB_ONLY && !skipDLLs && !(fs.existsSync(webpackPaths.dllPath) && fs.existsSync(manifest))) {
   console.log(
     chalk.black.bgYellow.bold(
       'The DLL files are missing. Sit back while we build them for you with "npm run build-dll"'
@@ -44,7 +44,7 @@ const configuration: webpack.Configuration = {
 
   mode: 'development',
 
-  target: ['web', 'electron-renderer'],
+  target: DEV_WEB_ONLY ? ['web'] : ['web', 'electron-renderer'],
 
   entry: [
     `webpack-dev-server/client?http://localhost:${port}/dist`,
@@ -123,7 +123,7 @@ const configuration: webpack.Configuration = {
     ],
   },
   plugins: [
-    ...(skipDLLs
+    ...(skipDLLs || DEV_WEB_ONLY
       ? []
       : [
           new webpack.DllReferencePlugin({
@@ -192,9 +192,11 @@ const configuration: webpack.Configuration = {
 
   devServer: {
     port,
+    host: '0.0.0.0',
+    allowedHosts: 'all',
     compress: true,
     hot: true,
-    headers: { 'Access-Control-Allow-Origin': '*' },
+    headers: { 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'no-cache' },
     static: {
       publicPath: '/',
     },
