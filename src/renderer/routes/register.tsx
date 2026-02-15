@@ -1,29 +1,35 @@
 import { Box, Button, Checkbox, Flex, PasswordInput, Stack, Text, TextInput, Anchor } from '@mantine/core'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { loginUser, useAuthStore } from '@/stores/authStore'
+import { registerUser, useAuthStore } from '@/stores/authStore'
 
-export const Route = createFileRoute('/login')({
-  component: LoginPage,
+export const Route = createFileRoute('/register')({
+  component: RegisterPage,
 })
 
-function LoginPage() {
+function RegisterPage() {
   const navigate = useNavigate()
   const setUser = useAuthStore((s) => s.setUser)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [nickname, setNickname] = useState('')
   const [agreed, setAgreed] = useState(false)
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
     if (!agreed) {
       setError('请先同意用户协议和隐私政策')
       return
     }
+    if (password !== confirmPassword) {
+      setError('两次输入的密码不一致')
+      return
+    }
     setError('')
     setSubmitting(true)
-    const result = await loginUser(email, password)
+    const result = await registerUser(email, password, nickname || undefined)
     setSubmitting(false)
     if (result.error) {
       setError(result.error)
@@ -37,16 +43,16 @@ function LoginPage() {
     <Box mih="100vh" bg="var(--mantine-color-body)" p="md">
       <Flex justify="center" align="center" mb={40} pt="max(env(safe-area-inset-top), 0px)">
         <Text size="sm" fw={500}>
-          登录
+          注册
         </Text>
       </Flex>
 
       <Stack gap={4} mb={40}>
         <Text size="2rem" fw={700}>
-          欢迎回来
+          创建账号
         </Text>
         <Text c="dimmed" size="sm">
-          使用邮箱和密码登录
+          注册后即可开始使用
         </Text>
       </Stack>
 
@@ -64,13 +70,39 @@ function LoginPage() {
             },
           }}
         />
+        <TextInput
+          size="lg"
+          radius="md"
+          placeholder="昵称（选填）"
+          value={nickname}
+          onChange={(e) => setNickname(e.currentTarget.value)}
+          styles={{
+            input: {
+              backgroundColor: 'var(--mantine-color-default)',
+              border: 'none',
+            },
+          }}
+        />
         <PasswordInput
           size="lg"
           radius="md"
-          placeholder="输入密码"
+          placeholder="设置密码（至少6位）"
           value={password}
           onChange={(e) => setPassword(e.currentTarget.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+          styles={{
+            input: {
+              backgroundColor: 'var(--mantine-color-default)',
+              border: 'none',
+            },
+          }}
+        />
+        <PasswordInput
+          size="lg"
+          radius="md"
+          placeholder="确认密码"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.currentTarget.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleRegister()}
           styles={{
             input: {
               backgroundColor: 'var(--mantine-color-default)',
@@ -91,7 +123,7 @@ function LoginPage() {
         size="lg"
         radius="xl"
         loading={submitting}
-        onClick={handleLogin}
+        onClick={handleRegister}
         styles={{
           root: {
             background: 'linear-gradient(90deg, #E0CBA8 0%, #D4AF37 100%)',
@@ -101,15 +133,15 @@ function LoginPage() {
         }}
         mb="md"
       >
-        确认登录
+        注册
       </Button>
 
       <Flex align="center" justify="center" mb="md">
         <Text size="sm" c="dimmed">
-          还没有账号？
+          已有账号？
         </Text>
-        <Anchor size="sm" ml={4} onClick={() => navigate({ to: '/register' })}>
-          立即注册
+        <Anchor size="sm" ml={4} onClick={() => navigate({ to: '/login' })}>
+          去登录
         </Anchor>
       </Flex>
 

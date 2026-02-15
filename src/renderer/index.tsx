@@ -148,12 +148,10 @@ initializeApp()
     if (platform.type === 'mobile') {
       SplashScreen.hide()
     }
-    const el = document.querySelector('.splash-screen')
+    const el = document.querySelector('.splash-screen') as HTMLElement
     if (el) {
-      el.addEventListener('animationend', () => {
-        el.parentNode?.removeChild(el)
-      })
-      el.classList.add('splash-screen-fade-out')
+      el.style.display = 'none'
+      el.parentNode?.removeChild(el)
     }
 
     if (window?.navigator?.storage) {

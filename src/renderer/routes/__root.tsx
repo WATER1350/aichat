@@ -10,6 +10,7 @@ import useNeedRoomForWinControls from '@/hooks/useNeedRoomForWinControls'
 import { useIsSmallScreen, useSidebarWidth } from '@/hooks/useScreenChange'
 import useShortcut from '@/hooks/useShortcut'
 import '@/modals'
+import { fetchCurrentUser, useAuthStore } from '@/stores/authStore'
 import NiceModal from '@ebay/nice-modal-react'
 import {
   Avatar,
@@ -39,7 +40,7 @@ import {
 import { Box, Grid } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline'
 import { ThemeProvider } from '@mui/material/styles'
-import { createRootRoute, Outlet, useLocation } from '@tanstack/react-router'
+import { createRootRoute, Outlet, useLocation, useNavigate } from '@tanstack/react-router'
 import { useSetAtom } from 'jotai'
 import { useEffect, useMemo, useRef } from 'react'
 import SettingsModal, { navigateToSettings } from '@/modals/Settings'
@@ -59,9 +60,33 @@ import { useUIStore } from '@/stores/uiStore'
 
 function Root() {
   const location = useLocation()
+  const navigate = useNavigate()
   const spellCheck = useSettingsStore((state) => state.spellCheck)
   const language = useLanguage()
   const initialized = useRef(false)
+
+  const authUser = useAuthStore((s) => s.user)
+  const authLoading = useAuthStore((s) => s.loading)
+  const setAuthUser = useAuthStore((s) => s.setUser)
+  const setAuthLoading = useAuthStore((s) => s.setLoading)
+
+  useEffect(() => {
+    fetchCurrentUser().then((user) => {
+      setAuthUser(user)
+      setAuthLoading(false)
+    })
+  }, [setAuthUser, setAuthLoading])
+
+  useEffect(() => {
+    if (authLoading) return
+    const isAuthPage = location.pathname === '/login' || location.pathname === '/register'
+    if (!authUser && !isAuthPage) {
+      navigate({ to: '/login', replace: true })
+    }
+    if (authUser && isAuthPage) {
+      navigate({ to: '/', replace: true })
+    }
+  }, [authUser, authLoading, location.pathname, navigate])
 
   const setOpenAboutDialog = useUIStore((s) => s.setOpenAboutDialog)
 
@@ -153,6 +178,25 @@ function Root() {
       document.documentElement.removeAttribute('data-need-room-for-mac-controls')
     }
   }, [needRoomForMacWindowControls])
+
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register'
+
+  if (authLoading) {
+    return (
+      <Box className="flex items-center justify-center h-screen">
+        <Text c="dimmed">加载中...</Text>
+      </Box>
+    )
+  }
+
+  if (isAuthPage) {
+    return (
+      <Box className="box-border App" spellCheck={spellCheck} dir={language === 'ar' ? 'rtl' : 'ltr'}>
+        <Outlet />
+        <Toasts />
+      </Box>
+    )
+  }
 
   return (
     <Box className="box-border App" spellCheck={spellCheck} dir={language === 'ar' ? 'rtl' : 'ltr'}>

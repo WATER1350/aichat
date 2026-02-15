@@ -203,6 +203,13 @@ const configuration: webpack.Configuration = {
     historyApiFallback: {
       verbose: true,
     },
+    proxy: [
+      {
+        context: ['/api'],
+        target: 'http://localhost:5001',
+        changeOrigin: true,
+      },
+    ],
     setupMiddlewares(middlewares) {
       console.log('Starting preload.js builder...')
       const preloadProcess = spawn('npm', ['run', 'start:preload'], {
