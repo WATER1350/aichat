@@ -5,6 +5,7 @@ import {
   IconCode,
   IconInfoCircle,
   IconLayoutSidebarLeftCollapse,
+  IconLogout,
   IconMessageChatbot,
   IconPhotoPlus,
   IconSettingsFilled,
@@ -23,6 +24,7 @@ import useVersion from './hooks/useVersion'
 import { navigateToSettings } from './modals/Settings'
 import { trackingEvent } from './packages/event'
 import icon from './static/icon.png'
+import { logoutUser } from './stores/authStore'
 import { createEmpty } from './stores/sessionActions'
 import { useLanguage } from './stores/settingsStore'
 import { useUIStore } from './stores/uiStore'
@@ -226,6 +228,17 @@ export default function Sidebar() {
               if (isSmallScreen) {
                 setShowSidebar(false)
               }
+            }}
+            variant="light"
+            p="xs"
+          />
+          <NavLink
+            c="chatbox-tertiary"
+            className="rounded"
+            label={t('退出登录')}
+            leftSection={<ScalableIcon icon={IconLogout} size={20} />}
+            onClick={() => {
+              logoutUser()
             }}
             variant="light"
             p="xs"
