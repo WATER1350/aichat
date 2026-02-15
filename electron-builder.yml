@@ -1,4 +1,4 @@
-productName: Echo
+productName: Nian
 appId: xyz.chatboxapp.app
 asar: true
 asarUnpack: "**\\*.{node,dll}"
