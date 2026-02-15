@@ -29,12 +29,25 @@ export function migrateSession(session: Session): Session {
 export function sortSessions(sessions: SessionMeta[]): SessionMeta[] {
   const reversed: SessionMeta[] = []
   const pinned: SessionMeta[] = []
+  let justChat: SessionMeta | null = null
+
   for (const sess of sessions) {
+    // 将 Just Chat 会话单独处理，始终排在最前面
+    if (sess.id === 'justchat-b612-406a-985b-3ab4d2c482ff') {
+      justChat = sess
+      continue
+    }
     if (sess.starred) {
       pinned.push(sess)
       continue
     }
     reversed.unshift(sess)
   }
-  return pinned.concat(reversed)
+
+  // 返回顺序: Just Chat (如果有) -> 其他置顶会话 -> 非置顶会话
+  const result: SessionMeta[] = []
+  if (justChat) {
+    result.push(justChat)
+  }
+  return result.concat(pinned, reversed)
 }

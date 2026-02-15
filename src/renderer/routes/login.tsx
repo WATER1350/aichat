@@ -1,4 +1,5 @@
-import { Box, Button, Checkbox, Flex, PasswordInput, Stack, Text, TextInput, Anchor } from '@mantine/core'
+import { ActionIcon, Anchor, Box, Button, Checkbox, Flex, PasswordInput, Stack, Text, TextInput } from '@mantine/core'
+import { IconArrowLeft } from '@tabler/icons-react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { loginUser, useAuthStore } from '@/stores/authStore'
@@ -35,10 +36,14 @@ function LoginPage() {
 
   return (
     <Box mih="100vh" bg="var(--mantine-color-body)" p="md">
-      <Flex justify="center" align="center" mb={40} pt="max(env(safe-area-inset-top), 0px)">
+      <Flex justify="space-between" align="center" mb={40} pt="max(env(safe-area-inset-top), 0px)">
+        <ActionIcon variant="subtle" color="gray" onClick={() => navigate({ to: '/' })}>
+          <IconArrowLeft />
+        </ActionIcon>
         <Text size="sm" fw={500}>
           登录
         </Text>
+        <Box w={28} />
       </Flex>
 
       <Stack gap={4} mb={40}>

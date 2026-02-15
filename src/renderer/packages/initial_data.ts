@@ -1,5 +1,5 @@
 import { migrateMessage } from '@/utils/message'
-import { ModelProviderEnum, Session } from '../../shared/types'
+import { ModelProviderEnum, type Session } from '../../shared/types'
 
 export const defaultSessionsForEN: Session[] = [
   {
@@ -1030,5 +1030,20 @@ mindmap
   threads: [],
 }
 
+// 找到 Just chat 会话并在所有其他会话之前插入
 defaultSessionsForCN.unshift(imageCreatorSessionForCN, artifactSessionCN, mermaidSessionCN)
 defaultSessionsForEN.unshift(imageCreatorSessionForEN, artifactSessionEN, mermaidSessionEN)
+
+// 将 Just chat 移到最前面（提取第一个非 Just chat 的会话，然后将 Just chat unshift 到最前面）
+const justChatCNIndex = defaultSessionsForCN.findIndex((s) => s.id === 'justchat-b612-406a-985b-3ab4d2c482ff')
+const justChatENIndex = defaultSessionsForEN.findIndex((s) => s.id === 'justchat-b612-406a-985b-3ab4d2c482ff')
+
+if (justChatCNIndex > 0) {
+  const [justChatCN] = defaultSessionsForCN.splice(justChatCNIndex, 1)
+  defaultSessionsForCN.unshift(justChatCN)
+}
+
+if (justChatENIndex > 0) {
+  const [justChatEN] = defaultSessionsForEN.splice(justChatENIndex, 1)
+  defaultSessionsForEN.unshift(justChatEN)
+}
