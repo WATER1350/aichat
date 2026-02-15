@@ -80,9 +80,6 @@ function Root() {
   useEffect(() => {
     if (authLoading) return
     const isAuthPage = location.pathname === '/login' || location.pathname === '/register'
-    if (!authUser && !isAuthPage) {
-      navigate({ to: '/login', replace: true })
-    }
     if (authUser && isAuthPage) {
       navigate({ to: '/', replace: true })
     }
@@ -182,14 +179,6 @@ function Root() {
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register'
 
   if (authLoading) {
-    return (
-      <Box className="flex items-center justify-center h-screen">
-        <Text c="dimmed">加载中...</Text>
-      </Box>
-    )
-  }
-
-  if (!authUser && !isAuthPage) {
     return (
       <Box className="flex items-center justify-center h-screen">
         <Text c="dimmed">加载中...</Text>
