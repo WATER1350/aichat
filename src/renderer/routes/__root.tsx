@@ -189,6 +189,14 @@ function Root() {
     )
   }
 
+  if (!authUser && !isAuthPage) {
+    return (
+      <Box className="flex items-center justify-center h-screen">
+        <Text c="dimmed">加载中...</Text>
+      </Box>
+    )
+  }
+
   if (isAuthPage) {
     return (
       <Box className="box-border App" spellCheck={spellCheck} dir={language === 'ar' ? 'rtl' : 'ltr'}>

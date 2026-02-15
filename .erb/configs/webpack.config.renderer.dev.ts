@@ -47,8 +47,7 @@ const configuration: webpack.Configuration = {
   target: DEV_WEB_ONLY ? ['web'] : ['web', 'electron-renderer'],
 
   entry: [
-    `webpack-dev-server/client?http://localhost:${port}/dist`,
-    'webpack/hot/only-dev-server',
+    ...(DEV_WEB_ONLY ? [] : [`webpack-dev-server/client?http://localhost:${port}/dist`, 'webpack/hot/only-dev-server']),
     path.join(webpackPaths.srcRendererPath, 'index.tsx'),
   ],
 
@@ -195,7 +194,9 @@ const configuration: webpack.Configuration = {
     host: '0.0.0.0',
     allowedHosts: 'all',
     compress: true,
-    hot: true,
+    hot: !DEV_WEB_ONLY,
+    liveReload: !DEV_WEB_ONLY,
+    webSocketServer: DEV_WEB_ONLY ? false : 'ws',
     headers: { 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'no-cache' },
     static: {
       publicPath: '/',
